@@ -1,28 +1,31 @@
-const express = require("express");
-const http = require("http");
+// api/server.js
 const { Server } = require("socket.io");
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
 
-app.use(express.static("public"));
+module.exports = (req, res) => {
+    if (!res.socket.server.io) {
+        console.log("Initializing Socket.io...");
+        const io = new Server(res.socket.server, {
+            path: "/api/socketio",
+        });
 
-const allowedUsers = ["aryan@gmail.com", "rahul@gmail.com"];
+        const allowedUsers = ["aryan@gmail.com", "rahul@gmail.com"];
 
-io.on("connection", (socket) => {
-  console.log("User connected");
+        io.on("connection", socket => {
+            console.log("User connected");
 
-  socket.on("join", (username) => {
-    if (!allowedUsers.includes(username)) {
-      socket.emit("blocked", "You are not allowed!");
-      socket.disconnect();
+            socket.on("join", username => {
+                if (!allowedUsers.includes(username)) {
+                    socket.emit("blocked", "You are not allowed!");
+                    socket.disconnect();
+                }
+            });
+
+            socket.on("chat message", msg => {
+                io.emit("chat message", msg);
+            });
+        });
+
+        res.socket.server.io = io;
     }
-  });
-
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
-  });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log("Server running on", PORT));
+    res.end();
+};
