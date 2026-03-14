@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Messenger V2</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="login-container" id="loginDiv">
+  <input id="username" placeholder="Enter your email">
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="chat-container" id="chatDiv" style="display:none;">
+  <div class="header">Private Messenger</div>
+  <div id="messages"></div>
+  <div class="input-box">
+    <input id="msg" placeholder="Type message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="chat.js"></script>
+</body>
+</html>
